@@ -1,0 +1,21 @@
+PATH="/usr/local/sbin:/usr/sbin:/sbin:$PATH"
+
+# Add snap if it exists
+if [ -d "/snap/bin" ] ; then
+    PATH="$PATH:/snap/bin"
+fi
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# set PATH so it includes user's private bin if it exists 
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Add on rust if it exists
+if [ -d "$HOME/.cargo/bin" ] ; then
+    PATH="$PATH:$HOME/.cargo/bin"
+fi

@@ -1,0 +1,38 @@
+- name: Install Basics
+  apt:
+    update_cache: yes
+    name:
+      - sudo
+      - zsh
+      - iptables-persistent
+      - vim-gtk3
+      - net-tools
+      - netcat-openbsd
+      - spice-vdagent
+      - qemu-guest-agent
+      - sshpass
+      - tmux
+      - gcc
+      - gcc-multilib
+      - binutils-doc
+      - make
+      - autoconf
+      - automake
+      - flex
+      - bison
+      - gdb
+      - git
+
+- name: Add finity to sudo, set shell to zsh, generate SSH key
+  ansible.builtin.user:
+    name: finity
+    shell: /usr/bin/zsh
+    groups: sudo
+    append: yes
+    generate_ssh_key: yes
+
+- name: Set root shell to zsh, generate SSH key
+  ansible.builtin.user:
+    name: root
+    shell: /usr/bin/zsh
+    generate_ssh_key: yes

@@ -1,0 +1,59 @@
+- name: Copy SSH key
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ lookup('file', '/home/finity/.ssh/id_rsa.pub') }}"
+
+- name: Place zshrc
+  ansible.builtin.template:
+    src: zshrc
+    dest: ~/.zshrc
+    mode: '0644'
+
+- name: Place common_shrc
+  ansible.builtin.template:
+    src: common_shrc
+    dest: ~/.common_shrc
+    mode: '0644'
+
+- name: Place bash_rc
+  ansible.builtin.template:
+    src: bashrc
+    dest: ~/.bashrc
+    mode: '0644'
+
+- name: Place common_aliases
+  ansible.builtin.template:
+    src: common_aliases
+    dest: ~/.common_aliases
+    mode: '0644'
+
+- name: Place common_profile
+  ansible.builtin.template:
+    src: common_profile
+    dest: ~/.common_profile
+    mode: '0644'
+
+- name: Place profile
+  ansible.builtin.template:
+    src: profile
+    dest: ~/.profile
+    mode: '0644'
+
+- name: Place vimrc
+  ansible.builtin.template:
+    src: vimrc
+    dest: ~/.vimrc
+    mode: '0644'
+
+- name: Make a user bin directory
+  ansible.builtin.file:
+    path: ~/bin
+    state: directory
+    mode: '0755'
+
+- name: Place resize_vm_window.sh
+  ansible.builtin.template:
+    src: resize_vm_window.sh
+    dest: ~/bin/resize_vm_window.sh
+    mode: '0755'

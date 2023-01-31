@@ -1,0 +1,7 @@
+colorscheme murphy
+syntax on
+:highlight MatchParen ctermfg=223 ctermbg=236
+:set tabstop=4
+:set expandtab
+:set shiftwidth=4
+:set ai

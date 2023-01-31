@@ -1,0 +1,3 @@
+if [ -e "$HOME/.common_aliases" ]; then
+	. "$HOME/.common_aliases"
+fi

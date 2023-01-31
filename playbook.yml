@@ -1,0 +1,22 @@
+---
+- hosts: target
+  name: Find the become method
+  roles:
+    - check_for_sudo_setup
+
+- hosts: target
+  name: Setup the target as root
+  become: true
+  become_method: "{{ use_become_method }}"
+  roles:
+    - system_config
+    - user_config
+    - docker_compose_server
+    #- setup_k3d_kubernetes
+
+- hosts: target
+  name: Setup the target as user
+  become: true
+  become_user: finity
+  roles:
+    - user_config
