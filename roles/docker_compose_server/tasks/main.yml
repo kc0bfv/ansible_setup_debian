@@ -13,9 +13,13 @@
   args:
     creates: /usr/share/keyrings/docker-archive-keyring.gpg
 
+- name: Get Architecture
+  ansible.builtin.shell: dpkg --print-architecture
+  register: architecture
+
 - name: Add Docker Repository
   apt_repository:
-    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian buster stable
+    repo: deb [arch={{ architecture.stdout }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian buster stable
     filename: docker
     state: present
 
@@ -32,7 +36,15 @@
   get_url:
     url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
     dest: /usr/local/bin/docker-compose
-    mode: 0755
+    mode: '0755'
+
+- name: Create /etc/docker
+  ansible.builtin.file:
+    state: directory
+    path: /etc/docker
+    mode: '0755'
+    owner: root
+    group: root
 
 - name: Set Max Log Size
   template:

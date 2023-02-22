@@ -28,10 +28,20 @@
   args:
     creates: /usr/local/bin/kustomize
 
+- name: Remove downloaded kustomize
+  ansible.builtin.shell: rm kustomize
+  args:
+    removes: kustomize
+
 - name: Install helm
   ansible.builtin.shell: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
   args:
     creates: /usr/local/bin/helm
+
+- name: Install flux
+  ansible.builtin.shell: curl -s https://fluxcd.io/install.sh | bash
+  args:
+    creates: /usr/local/bin/flux
 
 - name: Set vm.max_map_count
   ansible.builtin.template:
@@ -61,3 +71,11 @@
 - name: Install istio modules now
   ansible.builtin.shell: modprobe xt_REDIRECT && modprobe xt_owner && modprobe xt_statistic
   when: istio_modules.changed
+
+- name: Copy over kubeseal
+  ansible.builtin.copy:
+    src: kubeseal
+    dest: /usr/local/sbin
+    mode: '0755'
+    owner: root
+    group: root

@@ -1,22 +1,59 @@
 ---
-- hosts: target
+- hosts: local_box, remote_hosts
   name: Find the become method
+  vars_files:
+    - secrets.enc
   roles:
     - check_for_sudo_setup
 
-- hosts: target
+- hosts: local_box, remote_hosts
   name: Setup the target as root
+  vars_files:
+    - secrets.enc
   become: true
   become_method: "{{ use_become_method }}"
   roles:
     - system_config
     - user_config
     - docker_compose_server
-    #- setup_k3d_kubernetes
 
-- hosts: target
-  name: Setup the target as user
+- hosts: local_box, remote_hosts, !raspbian_hosts
+  name: Setup non-raspbian targets as root
+  vars_files:
+    - secrets.enc
   become: true
-  become_user: finity
+  become_method: "{{ use_become_method }}"
+  roles:
+    - non_raspbian_system_config
+
+- hosts: remote_hosts
+  name: Setup remote-only components as root
+  become: true
+  become_method: "{{ use_become_method }}"
+  roles:
+    - user_config_remote_only
+
+- hosts: kubernetes_hosts
+  name: Setup targets with Kubernetes
+  vars_files:
+    - secrets.enc
+  become: true
+  become_method: "{{ use_become_method }}"
+  roles:
+    - setup_k3d_kubernetes
+
+- hosts: local_box, remote_hosts
+  name: Setup the target as user
+  vars_files:
+    - secrets.enc
+  become: true
+  become_user: "{{ ansible_user }}"
   roles:
     - user_config
+
+- hosts: remote_hosts
+  name: Setup remote-only components as user
+  become: true
+  become_user: "{{ ansible_user }}"
+  roles:
+    - user_config_remote_only

@@ -1,0 +1,2 @@
+root: kc0bfv+server+{{ ansible_facts['nodename'] }}+root@gmail.com
+{{ ansible_user }}: kc0bfv+server+{{ ansible_facts['nodename'] }}+{{ ansible_user }}@gmail.com

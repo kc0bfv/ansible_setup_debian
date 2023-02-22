@@ -5,6 +5,7 @@ promptinit
 prompt adam1
 
 setopt histignorealldups #sharehistory
+setopt HIST_IGNORE_SPACE
 
 # Use emacs keybindings even if our EDITOR is set to vi
 bindkey -e
@@ -42,4 +43,16 @@ fi
 
 if [ -e "$HOME/.common_profile" ]; then
     . "$HOME/.common_profile"
+fi
+
+if [ -e "/usr/local/bin/kubectl" ]; then
+    source <(kubectl completion zsh)
+fi
+
+if [ -e "/usr/local/bin/helm" ]; then
+    source <(helm completion zsh)
+fi
+
+if [ -e "/usr/local/bin/flux" ]; then
+    source <(flux completion zsh)
 fi

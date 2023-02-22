@@ -1,10 +1,8 @@
-- name: Check finity in sudo group
-  check_mode: true
-  ansible.builtin.user:
-    name: finity
-    groups: sudo
-    append: yes
-  register: sudogroup
+- name: Check user in sudo group
+  ansible.builtin.getent:
+    database: group
+    key: sudo
+    split: ":"
 
 - name: Check sudo command exists
   ansible.builtin.stat:
@@ -14,7 +12,7 @@
 - name: Select become method sudo
   ansible.builtin.set_fact:
     use_become_method: sudo
-  when: sudogroup.groups.find("sudo") != 1 and sudofile.stat.exists
+  when: ansible_facts.getent_group.sudo[2] is search(ansible_user) and sudofile.stat.exists
 
 - name: Select become method su
   ansible.builtin.set_fact:

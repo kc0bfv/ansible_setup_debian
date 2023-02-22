@@ -1,5 +1,5 @@
 - name: Install Basics
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
     name:
       - sudo
@@ -13,7 +13,6 @@
       - sshpass
       - tmux
       - gcc
-      - gcc-multilib
       - binutils-doc
       - make
       - autoconf
@@ -22,10 +21,17 @@
       - bison
       - gdb
       - git
+      - sshfs
+      - unattended-upgrades
+      - tcpdump
+      - dma
+      - bsd-mailx
+      - dnsutils
+      - python-is-python3
 
-- name: Add finity to sudo, set shell to zsh, generate SSH key
+- name: Add user to sudo, set shell to zsh, generate SSH key
   ansible.builtin.user:
-    name: finity
+    name: "{{ ansible_user }}"
     shell: /usr/bin/zsh
     groups: sudo
     append: yes
@@ -36,3 +42,49 @@
     name: root
     shell: /usr/bin/zsh
     generate_ssh_key: yes
+
+- name: Setup Unattended Upgrades - Debconf Selections
+  ansible.builtin.shell: echo unattended-upgrades unattended-upgrades/enable_auto_updates boolean true | debconf-set-selections
+  args:
+    creates: /etc/apt/apt.conf.d/20auto-upgrades
+
+- name: Setup Unattended Upgrades - Run dpkg-reconfigure
+  ansible.builtin.shell: /usr/sbin/dpkg-reconfigure -f noninteractive unattended-upgrades
+  args:
+    creates: /etc/apt/apt.conf.d/20auto-upgrades
+
+- name: Setup Unattended Upgrades - Email Root
+  ansible.builtin.lineinfile:
+    path: /etc/apt/apt.conf.d/50unattended-upgrades
+    regexp: 'Unattended-Upgrade::Mail '
+    line: 'Unattended-Upgrade::Mail "root";'
+
+- name: Setup Unattended Upgrades - Email On Error
+  ansible.builtin.lineinfile:
+    path: /etc/apt/apt.conf.d/50unattended-upgrades
+    regexp: 'Unattended-Upgrade::MailReport '
+    line: 'Unattended-Upgrade::MailReport "only-on-error";'
+
+- name: Setup Dragonfly Mail Agent - Aliases
+  ansible.builtin.template:
+    src: aliases
+    dest: /etc/aliases
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Setup Dragonfly Mail Agent - Auth
+  ansible.builtin.template:
+    src: auth.conf
+    dest: /etc/dma/auth.conf
+    owner: root
+    group: mail
+    mode: '0640'
+
+- name: Setup Dragonfly Mail Agent - Conf
+  ansible.builtin.template:
+    src: dma.conf
+    dest: /etc/dma/dma.conf
+    owner: root
+    group: mail
+    mode: '0640'

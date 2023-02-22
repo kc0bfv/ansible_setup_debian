@@ -1,0 +1,11 @@
+- name: Copy SSH key
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ lookup('file', '/home/finity/.ssh/id_rsa.pub') }}"
+
+- name: Place resize_vm_window.sh
+  ansible.builtin.template:
+    src: resize_vm_window.sh
+    dest: ~/bin/resize_vm_window.sh
+    mode: '0755'
