@@ -1,0 +1,34 @@
+- name: Install NFS
+  ansible.builtin.apt:
+    name:
+      - nfs-kernel-server
+
+- name: Create Share Directory
+  ansible.builtin.file:
+    state: directory
+    path: /mnt/nfs_share
+    mode: '0777'
+    owner: nobody
+    group: nogroup
+
+- name: Setup the Exports File
+  ansible.builtin.template:
+    src: exports
+    dest: /etc/exports
+    mode: '0744'
+  register: exports_created
+
+- name: Run Exportfs
+  ansible.builtin.shell: exportfs -a
+  when: exports_created.changed
+
+- name: Restart NFS Service
+  ansible.builtin.service:
+    name: nfs-kernel-server
+    state: restarted
+  when: exports_created.changed
+
+- name: Enable NFS Service at Starup
+  ansible.builtin.service:
+    name: nfs-kernel-server
+    enabled: true

@@ -1,6 +1,6 @@
 - name: Copy SSH key
   ansible.posix.authorized_key:
-    user: "{{ ansible_user_id }}"
+    user: "{{ ansible_facts['user_id'] }}"
     state: present
     key: "{{ lookup('file', '/home/finity/.ssh/id_rsa.pub') }}"
 

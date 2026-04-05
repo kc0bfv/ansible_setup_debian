@@ -28,6 +28,9 @@
       - bsd-mailx
       - dnsutils
       - python-is-python3
+      - wireguard
+      - wireguard-tools
+      - nmap
 
 - name: Add user to sudo, set shell to zsh, generate SSH key
   ansible.builtin.user:

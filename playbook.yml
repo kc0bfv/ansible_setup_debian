@@ -41,6 +41,7 @@
   become_method: "{{ use_become_method }}"
   roles:
     - setup_k3d_kubernetes
+    - nfs_server
 
 - hosts: local_box, remote_hosts
   name: Setup the target as user

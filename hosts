@@ -3,26 +3,26 @@ remote_hosts:
   vars:
     ansible_user: finity
   hosts:
-    #developmentpi:
-    192.168.122.218:
+    developmentpi:
+    192.168.86.69:
     192.168.122.115:
-    #ssh.devops.notmet.net:
-    #  ansible_ssh_private_key_file: ../terraform/aws-debian-with-vpc/key
-    #  ansible_user: admin
+    ssh.devops.notmet.net:
+      ansible_ssh_private_key_file: ../terraform/aws-debian-with-vpc/key
+      ansible_user: admin
 
 kubernetes_hosts:
   hosts:
     192.168.122.218:
     192.168.122.115:
-    #ssh.devops.notmet.net:
+    ssh.devops.notmet.net:
 
 raspbian_hosts:
   hosts:
-    #developmentpi:
+    developmentpi:
 
 local_box:
   vars:
     ansible_user: finity
   hosts:
-    #localhost:
-    #  ansible_connection: local
+    localhost:
+      ansible_connection: local
