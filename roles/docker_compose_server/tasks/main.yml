@@ -19,7 +19,7 @@
 
 - name: Add Docker Repository
   apt_repository:
-    repo: deb [arch={{ architecture.stdout }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian buster stable
+    repo: deb [arch={{ architecture.stdout }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian trixie stable
     filename: docker
     state: present
 
