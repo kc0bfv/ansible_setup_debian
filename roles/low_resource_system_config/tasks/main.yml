@@ -1,0 +1,7 @@
+- name: Setup Logrotate
+  ansible.builtin.template:
+    src: logrotate.conf
+    dest: /etc/logrotate.conf
+    owner: root
+    group: root
+    mode: '0644'

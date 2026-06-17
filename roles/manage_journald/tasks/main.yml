@@ -1,0 +1,22 @@
+- name: Create journald.conf.d Directory
+  ansible.builtin.file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: '755'
+
+- name: Install journalctl Limit
+  ansible.builtin.template:
+    src: SystemMaxUse.conf
+    dest: /etc/systemd/journald.conf.d/SystemMaxUse.conf
+    owner: root
+    group: root
+    mode: '644'
+  register: journaldmaxuse
+
+- name: Restart Journald
+  ansible.builtin.systemd_service:
+    name: systemd-journald
+    state: restarted
+  when: journaldmaxuse.changed

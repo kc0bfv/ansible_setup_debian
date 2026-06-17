@@ -24,7 +24,8 @@
       - sshfs
       - unattended-upgrades
       - tcpdump
-      - dma
+      - postfix
+      - postfix-cdb
       - bsd-mailx
       - dnsutils
       - python-is-python3
@@ -68,26 +69,49 @@
     regexp: 'Unattended-Upgrade::MailReport '
     line: 'Unattended-Upgrade::MailReport "only-on-error";'
 
-- name: Setup Dragonfly Mail Agent - Aliases
+- name: Setup Mail Agent - Aliases
   ansible.builtin.template:
     src: aliases
     dest: /etc/aliases
     owner: root
     group: root
     mode: '0644'
+  register: postfixaliases
 
-- name: Setup Dragonfly Mail Agent - Auth
+- name: Setup Postfix Mail Agent - main.cf
   ansible.builtin.template:
-    src: auth.conf
-    dest: /etc/dma/auth.conf
+    src: main.cf
+    dest: /etc/postfix/main.cf
     owner: root
-    group: mail
-    mode: '0640'
+    group: postfix
+    mode: '0644'
+  register: postfixmain
 
-- name: Setup Dragonfly Mail Agent - Conf
+- name: Setup Postfix Mail Agent - master.cf
   ansible.builtin.template:
-    src: dma.conf
-    dest: /etc/dma/dma.conf
+    src: master.cf
+    dest: /etc/postfix/master.cf
     owner: root
-    group: mail
+    group: postfix
+    mode: '0644'
+  register: postfixmaster
+
+- name: Setup Postfix Mail Agent - sasl_passwd
+  ansible.builtin.template:
+    src: sasl_passwd
+    dest: /etc/postfix/sasl_passwd
+    owner: root
+    group: postfix
     mode: '0640'
+  register: postfixpasswd
+
+- name: Update Postfix Aliases If Needed
+  ansible.builtin.command:
+    cmd: /usr/bin/newaliases
+  when: postfixaliases.changed
+
+- name: Restart Postfix Mail Agent
+  ansible.builtin.systemd_service:
+    name: postfix
+    state: restarted
+  when: postfixaliases.changed or postfixmain.changed or postfixmaster.changed or postfixpasswd.changed
